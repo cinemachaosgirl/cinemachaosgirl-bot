@@ -1,6 +1,6 @@
 import os
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import Application, CommandHandler, ContextTypes
+from telegram.ext import Updater, CommandHandler, CallbackContext
 
 BOT_TOKEN = os.environ.get("BOT_TOKEN")
 
@@ -17,18 +17,23 @@ TEXT = (
     "Пройди и напиши свой результат 👇"
 )
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+def start(update: Update, context: CallbackContext):
     keyboard = [[InlineKeyboardButton("🎯 Пройти тест", url="https://high5test.com")]]
     reply_markup = InlineKeyboardMarkup(keyboard)
-    await update.message.reply_text(TEXT, parse_mode="Markdown", reply_markup=reply_markup)
+    update.message.reply_text(TEXT, parse_mode="Markdown", reply_markup=reply_markup)
 
-async def test(update: Update, context: ContextTypes.DEFAULT_TYPE):
+def test(update: Update, context: CallbackContext):
     keyboard = [[InlineKeyboardButton("🎯 Пройти тест", url="https://high5test.com")]]
     reply_markup = InlineKeyboardMarkup(keyboard)
-    await update.message.reply_text(TEXT, parse_mode="Markdown", reply_markup=reply_markup)
+    update.message.reply_text(TEXT, parse_mode="Markdown", reply_markup=reply_markup)
+
+def main():
+    updater = Updater(BOT_TOKEN)
+    dp = updater.dispatcher
+    dp.add_handler(CommandHandler("start", start))
+    dp.add_handler(CommandHandler("test", test))
+    updater.start_polling()
+    updater.idle()
 
 if __name__ == "__main__":
-    app = Application.builder().token(BOT_TOKEN).build()
-    app.add_handler(CommandHandler("start", start))
-    app.add_handler(CommandHandler("test", test))
-    app.run_polling()
+    main()
